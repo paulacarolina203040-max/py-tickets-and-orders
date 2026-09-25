@@ -80,7 +80,7 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def clean(self):
+    def clean(self) -> None:
         super().clean()
         if self.row < 1:
             raise ValidationError(
@@ -123,7 +123,7 @@ class Ticket(models.Model):
                 "Seat already booked."
             )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 
