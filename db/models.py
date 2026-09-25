@@ -94,6 +94,7 @@ class Ticket(models.Model):
             f"(row: {self.row}, seat: {self.seat})"
         )
 
+
 class User(AbstractUser):
     first_name = models.CharField(
         max_length=150, blank=True

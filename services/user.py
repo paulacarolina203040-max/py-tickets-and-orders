@@ -7,11 +7,11 @@ User = get_user_model()
 @transaction.atomic
 def create_user(
     username: str,
-    password: str = None,
-    email: str = None,
-    first_name: str = None,
-    last_name: str = None,
-):
+    password: str | None = None,
+    email: str | None = None,
+    first_name: str | None = None,
+    last_name: str | None = None,
+) -> None:
     user = User.objects.create_user(
         username=username,
         email=email,
@@ -31,12 +31,12 @@ def get_user(user_id: int):
 @transaction.atomic
 def update_user(
     user_id: int,
-    username: str = None,
-    password: str = None,
-    email: str = None,
-    first_name: str = None,
-    last_name: str = None,
-):
+    username: str | None = None,
+    password: str | None = None,
+    email: str | None = None,
+    first_name: str | None = None,
+    last_name: str | None = None,
+) -> None:
     user = get_user(user_id)
     if username is not None:
         user.username = username
