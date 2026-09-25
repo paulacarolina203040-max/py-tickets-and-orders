@@ -97,11 +97,22 @@ class Ticket(models.Model):
             hall = self.movie_session.cinema_hall
             if self.row > hall.rows:
                 raise ValidationError(
-                    {"row": "Row out of range."}
+                    {
+                        "row": (
+                            "row number must be in "
+                            f"available range: (1, rows): (1, {hall.rows})"
+                        )
+                    }
                 )
             if self.seat > hall.seats_in_row:
                 raise ValidationError(
-                    {"seat": "Seat out of range."}
+                    {
+                        "seat": (
+                            "seat number must be in "
+                            "available range: (1, seats_in_row): "
+                            f"(1, {hall.seats_in_row})"
+                        )
+                    }
                 )
         if Ticket.objects.filter(
             movie_session=self.movie_session,
@@ -111,6 +122,10 @@ class Ticket(models.Model):
             raise ValidationError(
                 "Seat already booked."
             )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         constraints = (
