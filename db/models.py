@@ -87,7 +87,6 @@ class Ticket(models.Model):
             ),
         )
 
-
     def __str__(self) -> str:
         return (
             f"{self.movie_session} "
