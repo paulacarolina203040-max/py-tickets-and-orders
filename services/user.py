@@ -11,12 +11,12 @@ def create_user(
     email: str | None = None,
     first_name: str | None = None,
     last_name: str | None = None,
-) -> None:
+) -> object:
     user = User.objects.create_user(
         username=username,
-        email=email,
-        first_name=first_name,
-        last_name=last_name,
+        email=email if email else "",
+        first_name=first_name if first_name else "",
+        last_name=last_name if last_name else "",
     )
     if password:
         user.set_password(password)
@@ -36,7 +36,7 @@ def update_user(
     email: str | None = None,
     first_name: str | None = None,
     last_name: str | None = None,
-) -> None:
+) -> object:
     user = get_user(user_id)
     if username is not None:
         user.username = username

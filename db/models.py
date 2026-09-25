@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -78,6 +79,38 @@ class Ticket(models.Model):
     )
     row = models.IntegerField()
     seat = models.IntegerField()
+
+    def clean(self):
+        super().clean()
+        if self.row < 1:
+            raise ValidationError(
+                {"row": "Invalid row."}
+            )
+        if self.seat < 1:
+            raise ValidationError(
+                {"seat": "Invalid seat."}
+            )
+        if (
+            self.movie_session
+            and self.movie_session.cinema_hall
+        ):
+            hall = self.movie_session.cinema_hall
+            if self.row > hall.rows:
+                raise ValidationError(
+                    {"row": "Row out of range."}
+                )
+            if self.seat > hall.seats_in_row:
+                raise ValidationError(
+                    {"seat": "Seat out of range."}
+                )
+        if Ticket.objects.filter(
+            movie_session=self.movie_session,
+            row=self.row,
+            seat=self.seat,
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError(
+                "Seat already booked."
+            )
 
     class Meta:
         constraints = (

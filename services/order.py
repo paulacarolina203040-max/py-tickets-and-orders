@@ -1,10 +1,11 @@
-from db.models import Order, Ticket, User
 from django.db import transaction
+
+from db.models import Order, Ticket, User
 
 
 @transaction.atomic
 def create_order(
-    tickets: list[dict], username: str, date: str = None
+    tickets: list[dict], username: str, date: str | None = None
 ) -> Order:
     user = User.objects.get(username=username)
     order = Order.objects.create(user=user)
@@ -13,12 +14,15 @@ def create_order(
         order.save(update_fields=["created_at"])
 
     for ticket_data in tickets:
-        Ticket.objects.create(
+        ticket = Ticket(
             order=order,
             movie_session_id=ticket_data["movie_session"],
             row=ticket_data["row"],
             seat=ticket_data["seat"],
         )
+        ticket.full_clean()
+        ticket.save()
+
     return order
 
 
